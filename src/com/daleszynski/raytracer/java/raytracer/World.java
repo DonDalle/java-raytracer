@@ -8,7 +8,6 @@ import com.daleszynski.raytracer.java.math.Ray;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Die darzustellende Welt
@@ -82,18 +81,12 @@ public class World {
         if (r == null) {
             throw new IllegalArgumentException("r must not be null");
         }
-        final Optional<Hit> min  = geos.stream()
-             .map(geo -> geo.hit(r))
-             .filter(hit -> hit != null)
-             .filter(hit -> hit.t > 0)
-             .min((h1, h2) -> Double.compare(h1.t, h2.t));
-
-        if(min.isPresent()) {
-            return min.get();
-        }
-
-        return null;
-
+        return geos.stream()
+            .map(geo -> geo.hit(r))
+            .filter(hit -> hit != null)
+            .filter(hit -> hit.t > 0)
+            .min((h1, h2) -> Double.compare(h1.t, h2.t))
+            .orElse(null);
     }
 
     @Override

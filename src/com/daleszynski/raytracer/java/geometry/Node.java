@@ -1,11 +1,14 @@
 package com.daleszynski.raytracer.java.geometry;
 
 
+import com.daleszynski.raytracer.java.image.Color;
 import com.daleszynski.raytracer.java.material.Material;
 import com.daleszynski.raytracer.java.math.Ray;
 import com.daleszynski.raytracer.java.math.Transform;
+import com.daleszynski.raytracer.java.raytracer.Tracer;
+import com.daleszynski.raytracer.java.raytracer.World;
 
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +29,12 @@ public class Node extends Geometry {
     public final List<Geometry> geos;
 
     /**
+     * will be used to determine weather we set a color for all geometries in this node.
+     * Contains either no value or this object.
+     */
+    private final Optional<Geometry> self;
+
+    /**
      * Erstellt einen Szenengraph
      * @param transformation die Transformation für den Graphen
      * @param geos die Geometrien
@@ -41,6 +50,7 @@ public class Node extends Geometry {
         }
         this.geos = geos;
         this.transformation = transformation;
+        this.self = Optional.of(this);
     }
 
     /**
@@ -50,11 +60,40 @@ public class Node extends Geometry {
      * @param material das Material
      */
     public Node(final Transform transformation, final Geometry geo, final Material material) {
-        super(material);
+        this(transformation, Collections.singletonList(geo), material);
+    }
+
+    /**
+     * Use this constructor to create the Node and use the Materials of the geometries
+     * @param transformation the Transfrom object
+     * @param geos the List of Geometries
+     */
+    public Node(final Transform transformation, final List<Geometry> geos) {
+        super(new Material() {  //TODO Create a placeholder material in an own file?
+            @Override
+            public Color colorFor(Hit hit, World world, Tracer tracer) {
+                return new Color(-1, -1, -1);
+            }
+        });
+
+        if (transformation == null) {
+            throw new IllegalArgumentException("transformation must not be null");
+        }
+        if (geos == null) {
+            throw new IllegalArgumentException("geos must not be null");
+        }
+        this.geos = geos;
         this.transformation = transformation;
-        final List<Geometry> list = new LinkedList<>();
-        list.add(geo);
-        this.geos = list;
+        this.self = Optional.empty();
+    }
+
+    /**
+     * Use this constructor to create the Node and use a single geometry and the Material of the Geometry
+     * @param transformation the Transform objekt
+     * @param geo the Geometry
+     */
+    public Node(final Transform transformation, final Geometry geo) {
+        this(transformation, Collections.singletonList(geo));
     }
 
     @Override
@@ -64,18 +103,13 @@ public class Node extends Geometry {
         }
 
         final Ray transformedRay = transformation.mul(r);
-        final Optional<Hit> min  = geos.stream()
+        return geos.stream()
                 .map(geo -> geo.hit(transformedRay))
                 .filter(hit -> hit != null)
                 .filter(hit -> hit.t > 0)
-                .min((h1, h2) -> Double.compare(h1.t, h2.t));
-
-        if(min.isPresent()) {
-            Hit hit = min.get();
-            return new Hit(hit.t, r, hit.geo , transformation.mul(hit.n), hit.texCoord2D);
-        }
-
-        return null;
+                .min((h1, h2) -> Double.compare(h1.t, h2.t))
+                .map(hit -> new Hit(hit.t, r, self.orElse(hit.geo), transformation.mul(hit.n), hit.texCoord2D))
+                .orElse(null);
     }
     @Override
     public boolean equals(Object o) {
