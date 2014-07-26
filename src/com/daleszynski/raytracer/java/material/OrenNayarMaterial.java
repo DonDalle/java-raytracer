@@ -65,8 +65,8 @@ public class OrenNayarMaterial extends Material{
                 final double C = Math.sin(alpha) * Math.tan(beta);
 
                 final double L1 = Math.max(0.0, NdotL) * (A + B * Math.max(0.0, gamma) * C);
-                //sum = sum.add(com.daleszynski.raytracer.java.light.com.daleszynski.raytracer.java.texture.mul(L1));
-                sum = sum.add(cd.mul(L1));
+                final double intensity = light.intensity(pointHit);
+                sum = sum.add(cd.mul(L1).mul(intensity));
             }
 
         }

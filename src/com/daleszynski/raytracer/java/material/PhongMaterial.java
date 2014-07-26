@@ -62,6 +62,7 @@ public class PhongMaterial extends Material {
         if (world == null) {
             throw new IllegalArgumentException("world must not be null");
         }
+
         if (tracer == null) {
             throw new IllegalArgumentException("tracer must not be null");
         }
@@ -80,8 +81,9 @@ public class PhongMaterial extends Material {
                 final Vector3 l = light.directionFrom(pointHit).normalized();
                 final Vector3 rl = l.reflectedOn(n);
                 final Vector3 e = hit.ray.d.mul(-1).normalized();
-                final Color part1 = cd.mul(cl).mul(Math.max(0, n.dot(l)));
-                final Color part2 = cs.mul(cl).mul(Math.pow(Math.max(0, (e.dot(rl))), p));
+                final double intensity = light.intensity(pointHit);
+                final Color part1 = cd.mul(cl).mul(Math.max(0, n.dot(l))).mul(intensity);
+                final Color part2 = cs.mul(cl).mul(Math.pow(Math.max(0, (e.dot(rl))), p)).mul(intensity);
                 sum = sum.add(part1.add(part2));
             }
         }

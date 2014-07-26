@@ -37,7 +37,11 @@ public class SpotLight extends Light {
      */
 
     public SpotLight(final Color color, final Point3 position, final boolean castsShadows, final Vector3 direction, double halfAngle){
-        super(color, castsShadows);
+        this(color, position,castsShadows,direction, halfAngle,  1,0,0);
+
+    }
+    public SpotLight(final Color color, final Point3 position, final boolean castsShadows, final Vector3 direction, double halfAngle, final double constantAttenuation, final double linearAttenuation, final double quadraticAttenuation) {
+        super(color, castsShadows, constantAttenuation, linearAttenuation, quadraticAttenuation);
         if (position == null) {
             throw new IllegalArgumentException("position must not be null");
         }
@@ -48,6 +52,7 @@ public class SpotLight extends Light {
         this.direction = direction;
         this.halfAngle = halfAngle;
     }
+
 
 
     /**
@@ -97,6 +102,18 @@ public class SpotLight extends Light {
         }
         return position.sub(point).normalized();
     }
+
+    @Override
+    public double intensity(final Point3 point) {
+        if (point == null) {
+            throw new IllegalArgumentException("point must not be null");
+        }
+
+        final double distance = point.sub(position).magnitude;
+        return 1 / (constantAttenuation + linearAttenuation * distance + quadraticAttenuation * distance * distance);
+    }
+
+
 
     @Override
     public boolean equals(Object o) {

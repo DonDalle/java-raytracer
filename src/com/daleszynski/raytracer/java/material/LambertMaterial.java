@@ -56,11 +56,8 @@ public class LambertMaterial extends Material {
             if (light.illuminates(pointHit, world)) {
                 final Color cl = light.color;
                 final Vector3 l = light.directionFrom(pointHit).normalized();
-                sum = sum.add(
-                        cd.mul(cd)
-                                .mul(cl)
-                                .mul(Math.max(0, n.dot(l)))
-                );
+                final double intensity = light.intensity(pointHit);
+                sum = sum.add(cd.mul(cd).mul(cl).mul(Math.max(0, n.dot(l))).mul(intensity));
             }
         }
         return sum;

@@ -20,17 +20,25 @@ public abstract class Light {
      */
     public final boolean castsShadows;
 
+    //TODO JavaDoc
+    public final double constantAttenuation;
+    public final double linearAttenuation;
+    public final double quadraticAttenuation;
+
     /**
      * Erstellt ein neues Licht
      * @param color Farbe des Lichts
      * @param castsShadows true wenn Licht Schatten wirft, sonst false
      */
-    public Light(final Color color, final boolean castsShadows){
+    public Light(final Color color, final boolean castsShadows, final double constantAttenuation, final double linearAttenuation, final double quadraticAttenuation){
         if (color == null) {
             throw new IllegalArgumentException("diffuse must not be null");
         }
         this.castsShadows = castsShadows;
         this.color = color;
+        this.constantAttenuation = constantAttenuation;
+        this.linearAttenuation = linearAttenuation;
+        this.quadraticAttenuation = quadraticAttenuation;
     }
 
     /**
@@ -46,6 +54,9 @@ public abstract class Light {
      * @return point als vector3
      */
     public abstract Vector3 directionFrom(Point3 point);
+
+
+    public abstract double intensity(final Point3 point);
 
     @Override
     public String toString() {

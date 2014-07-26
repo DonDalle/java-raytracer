@@ -25,7 +25,7 @@ public class DirectionalLight extends Light{
      * @param castsShadows Schattenwurf
      */
     public DirectionalLight(final Color color, final Vector3 direction, final boolean castsShadows) {
-        super(color, castsShadows);
+        super(color, castsShadows, 0,0,0);
         if (direction == null) {
             throw new IllegalArgumentException("direction must not be null");
         }
@@ -64,6 +64,11 @@ public class DirectionalLight extends Light{
     @Override
     public Vector3 directionFrom(final Point3 point) {
         return direction.mul(-1);
+    }
+
+    @Override
+    public double intensity(Point3 point) {
+        return 1;
     }
 
     @Override

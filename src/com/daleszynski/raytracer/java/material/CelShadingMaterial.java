@@ -47,7 +47,7 @@ public class CelShadingMaterial extends Material{
                 gray = Math.max(gray, 0);
                 gray = grayScale(gray, 7);
 
-                sum = sum.add(cd.mul(gray).mul(cl));
+                sum = sum.add(cd.mul(gray).mul(cl)); //TODO Add intensity?
             }
         }
         return sum;

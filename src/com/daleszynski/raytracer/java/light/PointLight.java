@@ -12,29 +12,33 @@ import com.daleszynski.raytracer.java.raytracer.World;
  */
 public class PointLight extends Light {
 
+    /**
+     * The Position of the Light
+     */
     private final Point3 position;
 
     /**
-     * Erstellt ein neues Punktlicht, dass in alle Richtungen strahlt
+     * Creates a new Pointlight with no attenuation
      *
-     * @param color Farbe des Punktlichts
-     * @param position Position des Punkts
+     * @param color        Farbe des Punktlichts
+     * @param position     Position des Punkts
      * @param castsShadows Schattenwurf
      */
     public PointLight(final Color color, final Point3 position, final boolean castsShadows) {
-        super(color, castsShadows);
+        this(color, position, castsShadows, 1.0, 0.0, 0.0);
+    }
+
+    /**
+     * Creates a new PointLight with Attenuation
+     */
+    public PointLight(final Color color, final Point3 position, final boolean castsShadows, final double constantAttenuation, final double linearAttenuation, final double quadraticAttenuation) {
+        super(color, castsShadows, constantAttenuation, linearAttenuation, quadraticAttenuation);
         if (position == null) {
             throw new IllegalArgumentException("position must not be null");
         }
         this.position = position;
     }
 
-    /**
-     * ermittelt ob der Punkt vom Punktlicht angestrahlt wird
-     *
-     * @param point übergebener Punkt
-     * @return boolean
-     */
     @Override
     public boolean illuminates(final Point3 point, final World world) {
         if (point == null) {
@@ -46,30 +50,34 @@ public class PointLight extends Light {
         if (castsShadows) {
             final Ray ray = new Ray(point, directionFrom(point));
             final Hit hit = world.hit(ray);
-            if(hit == null || hit.t < 0.0001) {
+            if (hit == null || hit.t < 0.0001) {
                 return true;
             }
 
             final double tl = ray.tOf(this.position);
-            if(hit.t < tl) {
+            if (hit.t < tl) {
                 return false;
             }
         }
         return true;
     }
 
-    /**
-     * gibt für den übergebenen Punkt den Vektor l zurück, der zur Lichtquelle zeigt
-     *
-     * @param point übergebener Punkt
-     * @return point als vector3
-     */
     @Override
     public Vector3 directionFrom(Point3 point) {
         if (point == null) {
             throw new IllegalArgumentException("point must not be null");
         }
         return position.sub(point).normalized();
+    }
+
+    @Override
+    public double intensity(final Point3 point) {
+        if (point == null) {
+            throw new IllegalArgumentException("point must not be null");
+        }
+
+        final double distance = point.sub(position).magnitude;
+        return 1 / (constantAttenuation + linearAttenuation * distance + quadraticAttenuation * distance * distance);
     }
 
 

@@ -78,8 +78,9 @@ public class BlinnPhongMaterial extends Material {
                 final Vector3 l = light.directionFrom(pointHit).normalized(); //Vektor zur Lichtquelle
                 final Vector3 rl = l.reflectedOn(n); //Vektor zum betrachter
                 final Vector3 h = l.add(rl).normalized();
-                final Color part1 = cd.mul(cl).mul(Math.max(0, h.dot(l)));
-                final Color part2 = cs.mul(cl).mul(Math.pow(Math.max(0, (h.dot(rl))), p));
+                final double intensity = light.intensity(pointHit);
+                final Color part1 = cd.mul(cl).mul(Math.max(0, h.dot(l))).mul(intensity);
+                final Color part2 = cs.mul(cl).mul(Math.pow(Math.max(0, (h.dot(rl))), p)).mul(intensity);
                 sum = sum.add(part1.add(part2));
             }
         }

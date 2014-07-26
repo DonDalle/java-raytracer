@@ -84,8 +84,9 @@ public class ReflectiveMaterial extends Material{
                 final Vector3 l = light.directionFrom(pointHit).normalized();
                 final Vector3 rl = l.reflectedOn(n);
                 final Vector3 e = hit.ray.d.mul(-1).normalized();
-                Color part1 = cd.mul(cl).mul(Math.max(0, n.dot(l)));
-                Color part2 = cs.mul(cl).mul(Math.pow(Math.max(0, e.dot(rl)), p));
+                final double intensity = light.intensity(pointHit);
+                Color part1 = cd.mul(cl).mul(Math.max(0, n.dot(l))).mul(intensity);
+                Color part2 = cs.mul(cl).mul(Math.pow(Math.max(0, e.dot(rl)), p)).mul(intensity);
                 sum = sum.add(part1.add(part2));
             }
         }
