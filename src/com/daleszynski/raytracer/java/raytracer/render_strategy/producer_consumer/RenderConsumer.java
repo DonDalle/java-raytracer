@@ -1,10 +1,6 @@
 package com.daleszynski.raytracer.java.raytracer.render_strategy.producer_consumer;
 
 import com.daleszynski.raytracer.java.camera.Camera;
-import com.daleszynski.raytracer.java.geometry.Hit;
-import com.daleszynski.raytracer.java.image.DisplayThread;
-import com.daleszynski.raytracer.java.math.Ray;
-import com.daleszynski.raytracer.java.raytracer.Tracer;
 import com.daleszynski.raytracer.java.raytracer.World;
 
 import java.awt.*;
@@ -56,6 +52,8 @@ public class RenderConsumer implements Runnable{
     }
 
     private void render(Rectangle rect) {
+        throw new UnsupportedOperationException();
+        /*
         final Tracer tracer = new Tracer();
         for (int x =rect.x; x<rect.width;  x++) {
             for (int y = rect.y; y < rect.height; y++) {
@@ -76,6 +74,6 @@ public class RenderConsumer implements Runnable{
                 raster.setDataElements(x, height - 1 - y, model.getDataElements(color, null));
                 DisplayThread.finishedPixels++;
             }
-        }
+        } */
     }
 }

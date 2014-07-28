@@ -162,4 +162,16 @@ public class Color {
                 ", b=" + b +
                 '}';
     }
+
+    /**
+     * Divides the Color by a scalar
+     * @param s the scalar
+     * @return the Result
+     */
+    public Color div(int s) {
+        if(s == 0) {
+            throw new IllegalArgumentException("s must not be 0");
+        }
+        return new Color(r/s, g/s, b/s);
+    }
 }

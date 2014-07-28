@@ -2,11 +2,6 @@ package com.daleszynski.raytracer.java.material;
 
 import com.daleszynski.raytracer.java.geometry.Hit;
 import com.daleszynski.raytracer.java.image.Color;
-import com.daleszynski.raytracer.java.light.Light;
-import com.daleszynski.raytracer.java.math.Normal3;
-import com.daleszynski.raytracer.java.math.Point3;
-import com.daleszynski.raytracer.java.math.Ray;
-import com.daleszynski.raytracer.java.math.Vector3;
 import com.daleszynski.raytracer.java.raytracer.Tracer;
 import com.daleszynski.raytracer.java.raytracer.World;
 import com.daleszynski.raytracer.java.texture.Texture;
@@ -57,6 +52,8 @@ public class ReflectiveMaterial extends Material{
 
     @Override
     public Color colorFor(final Hit hit, final World world, final Tracer tracer) {
+        throw new UnsupportedOperationException(); //TODO
+/*
         if (hit == null) {
             throw new IllegalArgumentException("hit must not be null");
         }
@@ -96,6 +93,7 @@ public class ReflectiveMaterial extends Material{
 
         sum = sum.add(cr.mul(reflect));
         return sum;
+*/
     }
 
     @Override

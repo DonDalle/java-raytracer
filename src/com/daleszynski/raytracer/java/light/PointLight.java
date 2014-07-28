@@ -7,6 +7,9 @@ import com.daleszynski.raytracer.java.math.Ray;
 import com.daleszynski.raytracer.java.math.Vector3;
 import com.daleszynski.raytracer.java.raytracer.World;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * stellt eine Punktlichtquelle dar
  */
@@ -40,7 +43,7 @@ public class PointLight extends Light {
     }
 
     @Override
-    public boolean illuminates(final Point3 point, final World world) {
+    public List<Boolean> illuminates(final Point3 point, final World world) {
         if (point == null) {
             throw new IllegalArgumentException("point must not be null");
         }
@@ -48,36 +51,41 @@ public class PointLight extends Light {
             throw new IllegalArgumentException("world must not be null");
         }
         if (castsShadows) {
-            final Ray ray = new Ray(point, directionFrom(point));
+            final Ray ray = new Ray(point, position.sub(point).normalized());
             final Hit hit = world.hit(ray);
             if (hit == null || hit.t < 0.0001) {
-                return true;
+                return Collections.singletonList(true);
             }
 
             final double tl = ray.tOf(this.position);
             if (hit.t < tl) {
-                return false;
+                return Collections.singletonList(false);
             }
         }
-        return true;
+        return Collections.singletonList(true);
     }
 
     @Override
-    public Vector3 directionFrom(Point3 point) {
+    public List<Vector3> directionFrom(Point3 point) {
         if (point == null) {
             throw new IllegalArgumentException("point must not be null");
         }
-        return position.sub(point).normalized();
+        return Collections.singletonList(position.sub(point).normalized());
     }
 
     @Override
-    public double intensity(final Point3 point) {
+    public List<Double> intensity(final Point3 point) {
         if (point == null) {
             throw new IllegalArgumentException("point must not be null");
         }
 
         final double distance = point.sub(position).magnitude;
-        return 1 / (constantAttenuation + linearAttenuation * distance + quadraticAttenuation * distance * distance);
+        return Collections.singletonList(1 / (constantAttenuation + linearAttenuation * distance + quadraticAttenuation * distance * distance));
+    }
+
+    @Override
+    public int getSamplingPointsCount() {
+        return 1;
     }
 
 

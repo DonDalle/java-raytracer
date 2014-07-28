@@ -3,9 +3,6 @@ package com.daleszynski.raytracer.java.material;
 
 import com.daleszynski.raytracer.java.geometry.Hit;
 import com.daleszynski.raytracer.java.image.Color;
-import com.daleszynski.raytracer.java.light.Light;
-import com.daleszynski.raytracer.java.math.Point3;
-import com.daleszynski.raytracer.java.math.Vector3;
 import com.daleszynski.raytracer.java.raytracer.Tracer;
 import com.daleszynski.raytracer.java.raytracer.World;
 
@@ -24,6 +21,8 @@ public class CelShadingMaterial extends Material{
 
     @Override
     public Color colorFor(Hit hit, World world, Tracer tracer) {
+        throw new UnsupportedOperationException(); //TODO
+/*
         if (hit == null) {
             throw new IllegalArgumentException("hit must not be null");
         }
@@ -38,6 +37,7 @@ public class CelShadingMaterial extends Material{
         Color sum = cd.mul(ca);
         Point3 pointHit = hit.ray.at(hit.t);
 
+
         for (Light light : world.lights) {
             if(light.illuminates(pointHit, world)) {
                 Color cl = light.color;
@@ -51,6 +51,7 @@ public class CelShadingMaterial extends Material{
             }
         }
         return sum;
+        */
 
     }
 

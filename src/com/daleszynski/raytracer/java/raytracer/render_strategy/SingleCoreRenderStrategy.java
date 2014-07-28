@@ -1,21 +1,17 @@
 package com.daleszynski.raytracer.java.raytracer.render_strategy;
 
 import com.daleszynski.raytracer.java.camera.Camera;
-import com.daleszynski.raytracer.java.geometry.Hit;
-import com.daleszynski.raytracer.java.image.Color;
-import com.daleszynski.raytracer.java.math.Ray;
-import com.daleszynski.raytracer.java.raytracer.Tracer;
 import com.daleszynski.raytracer.java.raytracer.World;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
 
 @SuppressWarnings("unused")
 public class SingleCoreRenderStrategy implements RenderStrategy {
 
     @Override
     public BufferedImage render(int width, int height, Camera camera, World world, boolean isNormalImage) {
+        throw new UnsupportedOperationException();
+        /*
         final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         final WritableRaster raster = image.getRaster();
         final ColorModel model = image.getColorModel();
@@ -50,5 +46,6 @@ public class SingleCoreRenderStrategy implements RenderStrategy {
             }
         }
         return image;
+        */
     }
 }

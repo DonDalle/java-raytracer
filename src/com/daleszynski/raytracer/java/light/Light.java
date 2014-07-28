@@ -6,6 +6,10 @@ import com.daleszynski.raytracer.java.math.Point3;
 import com.daleszynski.raytracer.java.math.Vector3;
 import com.daleszynski.raytracer.java.raytracer.World;
 
+import java.util.List;
+
+//TODO JavaDoc
+
 /**
  * Abstrakte Basisklasse für das Licht
  */
@@ -46,17 +50,18 @@ public abstract class Light {
      * @param point übergebener Punkt
      * @return boolean
      */
-    public abstract boolean illuminates(Point3 point, World world);
+    public abstract List<Boolean> illuminates(Point3 point, World world);
 
     /**
      * gibt für den übergebenen Punkt den Vektor l zurück, der zur Lichtquelle zeigt
      * @param point übergebener Punkt
      * @return point als vector3
      */
-    public abstract Vector3 directionFrom(Point3 point);
+    public abstract List<Vector3> directionFrom(Point3 point);
 
 
-    public abstract double intensity(final Point3 point);
+    public abstract List<Double> intensity(final Point3 point);
+    public abstract int getSamplingPointsCount();
 
     @Override
     public String toString() {

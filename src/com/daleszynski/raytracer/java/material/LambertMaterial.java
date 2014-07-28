@@ -10,6 +10,8 @@ import com.daleszynski.raytracer.java.raytracer.Tracer;
 import com.daleszynski.raytracer.java.raytracer.World;
 import com.daleszynski.raytracer.java.texture.Texture;
 
+import java.util.List;
+
 /**
  * Repäsentiert ein LambertMaterial
  */
@@ -53,16 +55,23 @@ public class LambertMaterial extends Material {
         final Point3 pointHit = hit.ray.at(hit.t);
         Color sum = cd.mul(ca);
         for (final Light light : world.lights) {
-            if (light.illuminates(pointHit, world)) {
-                final Color cl = light.color;
-                final Vector3 l = light.directionFrom(pointHit).normalized();
-                final double intensity = light.intensity(pointHit);
-                sum = sum.add(cd.mul(cd).mul(cl).mul(Math.max(0, n.dot(l))).mul(intensity));
+            final List<Boolean> illuminates = light.illuminates(pointHit, world);
+            final List<Vector3> directionFrom = light.directionFrom(pointHit);
+            final List<Double> intensities = light.intensity(pointHit);
+            Color tmp = new Color(0,0,0);
+            for (int i = 0; i < light.getSamplingPointsCount(); i++) {
+                if(illuminates.get(i)) {
+                    final Color cl = light.color;
+                    final Vector3 l = directionFrom.get(i).normalized();
+                    final double intensity = intensities.get(i);
+                    tmp = tmp.add(cd.mul(cd).mul(cl).mul(Math.max(0, n.dot(l))).mul(intensity));
+                }
             }
+            sum = sum.add(tmp.div(light.getSamplingPointsCount()));
+
         }
         return sum;
     }
-
 
     @Override
     public int hashCode() {

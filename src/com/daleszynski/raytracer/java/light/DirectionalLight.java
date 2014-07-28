@@ -7,6 +7,9 @@ import com.daleszynski.raytracer.java.math.Ray;
 import com.daleszynski.raytracer.java.math.Vector3;
 import com.daleszynski.raytracer.java.raytracer.World;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Repräsentiert ein Directionales licht
  */
@@ -40,7 +43,7 @@ public class DirectionalLight extends Light{
      * @return boolean
      */
     @Override
-    public boolean illuminates(final Point3 point, World world) {
+    public List<Boolean> illuminates(final Point3 point, World world) {
         if (point == null) {
             throw new IllegalArgumentException("point must not be null");
         }
@@ -48,11 +51,12 @@ public class DirectionalLight extends Light{
             throw new IllegalArgumentException("world must not be null");
         }
         if(castsShadows) {
-            final Ray ray = new Ray(point, directionFrom(point));
+            final Ray ray = new Ray(point, direction.mul(-1));
             final Hit hit = world.hit(ray);
-            return hit == null;
+             return Collections.singletonList(hit == null);
         }
-        return true;
+        return Collections.singletonList(true);
+
     }
 
     /**
@@ -62,12 +66,17 @@ public class DirectionalLight extends Light{
      * @return point als vector3
      */
     @Override
-    public Vector3 directionFrom(final Point3 point) {
-        return direction.mul(-1);
+    public List<Vector3> directionFrom(final Point3 point) {
+        return Collections.singletonList(direction.mul(-1));
     }
 
     @Override
-    public double intensity(Point3 point) {
+    public List<Double> intensity(Point3 point) {
+        return Collections.singletonList(1.0);
+    }
+
+    @Override
+    public int getSamplingPointsCount() {
         return 1;
     }
 
