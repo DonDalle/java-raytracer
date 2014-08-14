@@ -57,14 +57,15 @@ public class LambertMaterial extends Material {
         for (final Light light : world.lights) {
             final List<Boolean> illuminates = light.illuminates(pointHit, world);
             final List<Vector3> directionFrom = light.directionFrom(pointHit);
-            final List<Double> intensities = light.intensity(pointHit);
+            final List<Double> intensity = light.intensity(pointHit);
             Color tmp = new Color(0,0,0);
             for (int i = 0; i < light.getSamplingPointsCount(); i++) {
                 if(illuminates.get(i)) {
                     final Color cl = light.color;
                     final Vector3 l = directionFrom.get(i).normalized();
-                    final double intensity = intensities.get(i);
-                    tmp = tmp.add(cd.mul(cd).mul(cl).mul(Math.max(0, n.dot(l))).mul(intensity));
+                    final double in = intensity.get(i);
+                    final Color part1 = cd.mul(cd).mul(cl).mul(Math.max(0, n.dot(l))).mul(in);
+                    tmp = tmp.add(part1);
                 }
             }
             sum = sum.add(tmp.div(light.getSamplingPointsCount()));

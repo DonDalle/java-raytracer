@@ -33,6 +33,14 @@ public class Color {
     }
 
     /**
+     * Creates a new Color with a grey scale, meaning that r,g,b components will be the same
+     * @param s the value to be used for rgb
+     */
+    public Color(double s) {
+        this(s,s,s);
+    }
+
+    /**
      * Erstellt eine neue Farbe
      *
      * @param r Rotwert zwischen 0 und 1

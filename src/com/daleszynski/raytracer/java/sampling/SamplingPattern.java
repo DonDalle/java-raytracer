@@ -7,26 +7,21 @@ import java.util.List;
 import java.util.Random;
 
 
+/**
+ * Represents a Sampling Pattern
+ */
 public class SamplingPattern {
 
+    /**
+     * The Samplingpoints of this pattern
+     */
     public final List<Point2> samplingPoints;
 
+    /**
+     * Creates a new Samplingpattern with a list of sampling points
+     * @param samplingPoints the samplingpoints
+     */
     public SamplingPattern(List<Point2> samplingPoints) {
         this.samplingPoints = samplingPoints;
-    }
-
-
-    /**
-     * Returns a SamplingPattern with n random Points
-     * @param n the Number of SamplingPoints
-     * @return the SamplingPattern
-     */
-    public static SamplingPattern randomPattern(int n) {
-        Random random = new Random();
-        List<Point2> samplingPoints = new LinkedList<>();
-        for (int i = 0; i < n; i++) {
-            samplingPoints.add(new Point2(random.nextDouble() - 0.5, random.nextDouble() - 0.5));
-        }
-        return new SamplingPattern(samplingPoints);
     }
 }
