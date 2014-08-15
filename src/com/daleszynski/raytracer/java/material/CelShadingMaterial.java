@@ -3,26 +3,33 @@ package com.daleszynski.raytracer.java.material;
 
 import com.daleszynski.raytracer.java.geometry.Hit;
 import com.daleszynski.raytracer.java.image.Color;
+import com.daleszynski.raytracer.java.light.Light;
+import com.daleszynski.raytracer.java.math.Point3;
+import com.daleszynski.raytracer.java.math.Vector3;
 import com.daleszynski.raytracer.java.raytracer.Tracer;
 import com.daleszynski.raytracer.java.raytracer.World;
+
+import java.util.List;
 
 /**
  * Repräsentiert das Material für das Cel Shading
  */
-public class CelShadingMaterial extends Material{
+@SuppressWarnings("UnusedDeclaration")
+public class CelShadingMaterial extends Material {
 
     /**
      * Die Farbe des Materials
      */
     public final Color color;
+
     public CelShadingMaterial(Color color) {
         this.color = color;
     }
 
     @Override
     public Color colorFor(Hit hit, World world, Tracer tracer) {
-        throw new UnsupportedOperationException(); //TODO
-/*
+
+
         if (hit == null) {
             throw new IllegalArgumentException("hit must not be null");
         }
@@ -32,40 +39,48 @@ public class CelShadingMaterial extends Material{
         if (tracer == null) {
             throw new IllegalArgumentException("tracer must not be null");
         }
-        Color cd = this.color;
-        Color ca = world.ambientColor;
+        final Color cd = this.color;
+        final Color ca = world.ambientColor;
+        final Point3 pointHit = hit.ray.at(hit.t);
         Color sum = cd.mul(ca);
-        Point3 pointHit = hit.ray.at(hit.t);
 
 
         for (Light light : world.lights) {
-            if(light.illuminates(pointHit, world)) {
-                Color cl = light.color;
-                Vector3 l = light.directionFrom(pointHit).normalized();
+            final List<Boolean> illuminates = light.illuminates(pointHit, world);
+            final List<Vector3> directionFrom = light.directionFrom(pointHit);
+            final List<Double> intensity = light.intensity(pointHit);
+            Color tmp = new Color(0,0,0);
+            for (int i = 0; i < light.getSamplingPointsCount(); i++) {
+                if (illuminates.get(i)) {
 
-                double gray = (hit.n.dot(l));
-                gray = Math.max(gray, 0);
-                gray = grayScale(gray, 7);
+                    final Color cl = light.color;
+                    final Vector3 l = directionFrom.get(i).normalized();
 
-                sum = sum.add(cd.mul(gray).mul(cl)); //TODO Add intensity?
+                    double gray = (hit.n.dot(l));
+                    gray = Math.max(gray, 0);
+                    gray = grayScale(gray, 7);
+
+                    tmp = tmp.add(cd.mul(gray).mul(cl).mul(intensity.get(i)));
+
+                }
             }
+            sum = sum.add(tmp.div(light.getSamplingPointsCount()));
         }
         return sum;
-        */
-
     }
 
     /**
      * Führst stufenbildung des Grauwertes Durch
-     * @param c Grauwert
+     *
+     * @param c             Grauwert
      * @param numberofsteps anzahl der STufen
      * @return Die Stufe
      */
     private double grayScale(final double c, final int numberofsteps) {
-        double step = 1/(double) numberofsteps;
+        double step = 1 / (double) numberofsteps;
         for (int i = 0; i < numberofsteps; i++) {
-            if(c<step*i) {
-                return i*step;
+            if (c < step * i) {
+                return i * step;
             }
 
         }

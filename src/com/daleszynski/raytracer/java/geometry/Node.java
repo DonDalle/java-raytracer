@@ -7,6 +7,7 @@ import com.daleszynski.raytracer.java.math.Ray;
 import com.daleszynski.raytracer.java.math.Transform;
 import com.daleszynski.raytracer.java.raytracer.Tracer;
 import com.daleszynski.raytracer.java.raytracer.World;
+import com.daleszynski.raytracer.java.utility.Constants;
 
 import java.util.Collections;
 import java.util.List;
@@ -106,7 +107,7 @@ public class Node extends Geometry {
         return geos.stream()
                 .map(geo -> geo.hit(transformedRay))
                 .filter(hit -> hit != null)
-                .filter(hit -> hit.t > 0)
+                .filter(hit -> hit.t > Constants.epsilon)
                 .min((h1, h2) -> Double.compare(h1.t, h2.t))
                 .map(hit -> new Hit(hit.t, r, self.orElse(hit.geo), transformation.mul(hit.n), hit.texCoord2D))
                 .orElse(null);

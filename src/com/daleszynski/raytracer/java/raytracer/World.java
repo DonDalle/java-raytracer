@@ -5,6 +5,7 @@ import com.daleszynski.raytracer.java.geometry.Hit;
 import com.daleszynski.raytracer.java.image.Color;
 import com.daleszynski.raytracer.java.light.Light;
 import com.daleszynski.raytracer.java.math.Ray;
+import com.daleszynski.raytracer.java.utility.Constants;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -84,7 +85,7 @@ public class World {
         return geos.stream()
             .map(geo -> geo.hit(r))
             .filter(hit -> hit != null)
-            .filter(hit -> hit.t > 0)
+            .filter(hit -> hit.t > Constants.epsilon)
             .min((h1, h2) -> Double.compare(h1.t, h2.t))
             .orElse(null);
     }

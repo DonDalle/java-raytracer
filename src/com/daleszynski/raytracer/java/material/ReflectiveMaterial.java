@@ -2,9 +2,16 @@ package com.daleszynski.raytracer.java.material;
 
 import com.daleszynski.raytracer.java.geometry.Hit;
 import com.daleszynski.raytracer.java.image.Color;
+import com.daleszynski.raytracer.java.light.Light;
+import com.daleszynski.raytracer.java.math.Normal3;
+import com.daleszynski.raytracer.java.math.Point3;
+import com.daleszynski.raytracer.java.math.Ray;
+import com.daleszynski.raytracer.java.math.Vector3;
 import com.daleszynski.raytracer.java.raytracer.Tracer;
 import com.daleszynski.raytracer.java.raytracer.World;
 import com.daleszynski.raytracer.java.texture.Texture;
+
+import java.util.List;
 
 /**
  * Stellt ein perfekt diffus reflektierendes Material dar
@@ -52,8 +59,8 @@ public class ReflectiveMaterial extends Material{
 
     @Override
     public Color colorFor(final Hit hit, final World world, final Tracer tracer) {
-        throw new UnsupportedOperationException(); //TODO
-/*
+
+
         if (hit == null) {
             throw new IllegalArgumentException("hit must not be null");
         }
@@ -76,16 +83,23 @@ public class ReflectiveMaterial extends Material{
         Color sum = cd.mul(ca);
 
         for(Light light: world.lights) {
-            if(light.illuminates(pointHit, world)) {
-                final Color cl = light.color;
-                final Vector3 l = light.directionFrom(pointHit).normalized();
-                final Vector3 rl = l.reflectedOn(n);
-                final Vector3 e = hit.ray.d.mul(-1).normalized();
-                final double intensity = light.intensity(pointHit);
-                Color part1 = cd.mul(cl).mul(Math.max(0, n.dot(l))).mul(intensity);
-                Color part2 = cs.mul(cl).mul(Math.pow(Math.max(0, e.dot(rl)), p)).mul(intensity);
-                sum = sum.add(part1.add(part2));
+            final List<Boolean> illuminates = light.illuminates(pointHit, world);
+            final List<Vector3> directionFrom = light.directionFrom(pointHit);
+            final List<Double> intensity = light.intensity(pointHit);
+            Color tmp = new Color(0,0,0);
+            for (int i = 0; i < light.getSamplingPointsCount(); i++) {
+                if (illuminates.get(i)) {
+                    final Color cl = light.color;
+                    final Vector3 l = directionFrom.get(i).normalized();
+                    final Vector3 rl = l.reflectedOn(n);
+                    final Vector3 e = hit.ray.d.mul(-1).normalized();
+                    final double in = intensity.get(i);
+                    Color part1 = cd.mul(cl).mul(Math.max(0, n.dot(l))).mul(in);
+                    Color part2 = cs.mul(cl).mul(Math.pow(Math.max(0, e.dot(rl)), p)).mul(in);
+                    tmp = tmp.add(part1.add(part2));
+                }
             }
+            sum = sum.add(tmp.div(light.getSamplingPointsCount()));
         }
         final Vector3 rd = d.add(n.mul(2*phi)).normalized();
         final Ray ray = new Ray(pointHit,  rd);
@@ -93,7 +107,6 @@ public class ReflectiveMaterial extends Material{
 
         sum = sum.add(cr.mul(reflect));
         return sum;
-*/
     }
 
     @Override

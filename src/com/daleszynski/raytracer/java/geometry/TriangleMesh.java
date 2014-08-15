@@ -9,6 +9,7 @@ import com.daleszynski.raytracer.java.math.Ray;
 import com.daleszynski.raytracer.java.optimization.AxisAlignedBoundingBox;
 import com.daleszynski.raytracer.java.texture.SingleColorTexture;
 import com.daleszynski.raytracer.java.texture.TexCoord2D;
+import com.daleszynski.raytracer.java.utility.Constants;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -162,7 +163,7 @@ public class TriangleMesh extends Geometry{
             final Optional<Hit> min  = triangles.stream()
                     .map(geo -> geo.hit(r))
                     .filter(hit -> hit != null)
-                    .filter(hit -> hit.t > 0)
+                    .filter(hit -> hit.t > Constants.epsilon)
                     .min((h1, h2) -> Double.compare(h1.t, h2.t));
 
             if(min.isPresent()) {
