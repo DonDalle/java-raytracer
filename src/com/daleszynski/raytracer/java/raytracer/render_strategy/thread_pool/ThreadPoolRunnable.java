@@ -1,7 +1,6 @@
 package com.daleszynski.raytracer.java.raytracer.render_strategy.thread_pool;
 
 import com.daleszynski.raytracer.java.camera.Camera;
-import com.daleszynski.raytracer.java.geometry.Hit;
 import com.daleszynski.raytracer.java.image.Color;
 import com.daleszynski.raytracer.java.image.DisplayThread;
 import com.daleszynski.raytracer.java.math.Ray;
@@ -10,6 +9,7 @@ import com.daleszynski.raytracer.java.raytracer.World;
 
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import java.util.List;
 
 /**
  * Der eigentliche Raytracing algorithmus.
@@ -78,27 +78,22 @@ public class ThreadPoolRunnable implements Runnable {
         this.world = world;
         this.isNormalImage = isNormalImage;
     }
-
+    //TODO normalmapping
     @Override
     public void run() {
+        if(isNormalImage) {
+            throw new UnsupportedOperationException("normalmapping not yet implemented");
+        }
         final Tracer tracer = new Tracer();
         for (int x =0; x<width;  x++) {
             for (int y = startHeight; y < maxHeight; y++) {
-                final Ray ray = camera.rayFor(width, height, x, y);
-                final Hit hit = world.hit(ray);
-                final int color;
-                if (hit == null) {
-                    color = world.backgroundColor.toRGB();
-                } else if(this.isNormalImage) {
-                    final double r = Math.abs(hit.n.x);
-                    final double g = Math.abs(hit.n.y);
-                    final double b = Math.abs(hit.n.z);
-
-                    color = new Color(r,g,b).toRGB();
-                } else {
-                    color = hit.geo.m.colorFor(hit, world, tracer).toRGB();
+                final List<Ray> rays = camera.raysFor(width, height, x, y);
+                Color sum = new Color(0,0,0);
+                for (final Ray ray: rays) {
+                    sum = sum.add(tracer.colorFor(ray, world));
                 }
-                raster.setDataElements(x, height - 1 - y, model.getDataElements(color, null));
+                final int rgb = sum.div(rays.size()).toRGB();
+                raster.setDataElements(x, height - 1 - y, model.getDataElements(rgb, null));
                 DisplayThread.finishedPixels++;
             }
         }

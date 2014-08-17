@@ -1,8 +1,14 @@
 package com.daleszynski.raytracer.java.camera;
 
 import com.daleszynski.raytracer.java.math.Point3;
-import com.daleszynski.raytracer.java.math.Vector3;
 import com.daleszynski.raytracer.java.math.Ray;
+import com.daleszynski.raytracer.java.math.Vector3;
+import com.daleszynski.raytracer.java.sampling.RegularSamplingPattern;
+import com.daleszynski.raytracer.java.sampling.SamplingPattern;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Stellt eine Orthographische Kamera dar
@@ -13,21 +19,36 @@ public class OrthographicCamera extends Camera {
      */
     public final double s;
 
+    public final SamplingPattern samplingPattern;
+
+    //TODO javadoc
+
     /**
      * Erstellt eine Orhographische Kamera
-     *
-     * @param e Position der Kamera
+     *  @param e Position der Kamera
      * @param g Blickrichtung
      * @param t Up-Vektor
      * @param s Skalierungfaktor der Bildebene
+     * @param samplingPattern the Sampling Pattern to be used
      */
+    public OrthographicCamera(final Point3 e, final Vector3 g, final Vector3 t, double s, final SamplingPattern samplingPattern) {
+        super(e, g, t);
+        if (samplingPattern == null) {
+            throw new IllegalArgumentException("samplingPattern must not be null");
+        }
+        this.s = s;
+        this.samplingPattern = samplingPattern;
+    }
+
     public OrthographicCamera(final Point3 e, final Vector3 g, final Vector3 t, double s) {
         super(e, g, t);
         this.s = s;
+        this.samplingPattern = new RegularSamplingPattern(1,1);
     }
 
+
     @Override
-    public Ray rayFor(int width, int height, int xPixel, int yPixel) {
+    public List<Ray> raysFor(int width, int height, int xPixel, int yPixel) {
         final double x = (double)xPixel;
         final double y = (double)yPixel;
         final double h = (double)height;
@@ -51,10 +72,17 @@ public class OrthographicCamera extends Camera {
             throw new IllegalArgumentException("x must not be smaller than 0");
         }
         final double a = w / h;
-        final Point3 o = e.add(u.mul(a * s * ((x - (w - 1) / 2) / (w - 1))))
-                    .add(v.mul(s * ((y - (h - 1) / 2) / (h - 1))));
+       //TODO optimieren
+        return samplingPattern.samplingPoints.stream()
+                .map(p -> e.add(u.mul(a * s * ((x - (w - 1) / 2) / (w - 1))))
+                            .add(v.mul(s * ((y - (h - 1) / 2) / (h - 1))))
+                            .add(u.mul(p.x).mul(a*s / w))
+                            .add(v.mul(p.y).mul(s / h))
+                )
+                .map(o -> new Ray(o, this.w.mul(-1)))
 
-        return new Ray(o, this.w.mul(-1));
+                .collect(Collectors.toCollection(ArrayList::new));
+
     }
 
     @Override

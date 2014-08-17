@@ -72,7 +72,7 @@ public abstract class Camera {
      * @param y y-Koordinate des Pixels
      * @return the Ray for the values
      */
-    public abstract Ray rayFor(final int w, final int h, final int x, final int y);
+    public abstract java.util.List<Ray> raysFor(final int w, final int h, final int x, final int y);
 
     @Override
     public boolean equals(Object o) {
