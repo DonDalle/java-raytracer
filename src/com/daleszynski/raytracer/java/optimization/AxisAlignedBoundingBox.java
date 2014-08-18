@@ -136,7 +136,7 @@ public class AxisAlignedBoundingBox extends Geometry {
                 tmin = t1;
 
             }
-            return new Hit(tmin, r, this, n, new TexCoord2D(0,0)); //TODO
+            return new Hit(tmin, r, this, n, new TexCoord2D(0,0));
         }
         return null;
     }

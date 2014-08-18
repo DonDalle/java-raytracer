@@ -82,7 +82,7 @@ public class ThreadPoolRunnable implements Runnable {
     @Override
     public void run() {
         if(isNormalImage) {
-            throw new UnsupportedOperationException("normalmapping not yet implemented");
+            //throw new UnsupportedOperationException("normalmapping not yet implemented");
         }
         final Tracer tracer = new Tracer();
         for (int x =0; x<width;  x++) {

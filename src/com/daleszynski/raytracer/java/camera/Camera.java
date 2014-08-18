@@ -3,6 +3,8 @@ package com.daleszynski.raytracer.java.camera;
 import com.daleszynski.raytracer.java.math.Point3;
 import com.daleszynski.raytracer.java.math.Ray;
 import com.daleszynski.raytracer.java.math.Vector3;
+import com.daleszynski.raytracer.java.sampling.RegularSamplingPattern;
+import com.daleszynski.raytracer.java.sampling.SamplingPattern;
 
 /**
  * Abstrakte Basisklasse für die Kameras.
@@ -39,12 +41,28 @@ public abstract class Camera {
     public final Vector3 w;
 
     /**
-     * Erstellt die Kamera und konstruiert ihr orthonormale Koordinatensystem
-     * @param e Position der Kamera
-     * @param g Blickrichtung
-     * @param t Up-Vektor
+     * The Samplingpattern to be used for the Camera
+     */
+    public final SamplingPattern samplingPattern;
+
+    /**
+     * Creates the Camera and uses the given Samplingpattern
+     * @param e Position of Camera
+     * @param g viewing direction
+     * @param t up-vector
      */
     public Camera(final Point3 e, final Vector3 g, final Vector3 t) {
+        this(e,g,t, new RegularSamplingPattern(1,1));
+    }
+
+    /**
+     * Creates the Camera and uses the given Samplingpattern
+     * @param e Position of Camera
+     * @param g viewing direction
+     * @param t up-vector
+     * @param samplingPattern the samplingpattern to use
+     */
+    public Camera(Point3 e, Vector3 g, Vector3 t, SamplingPattern samplingPattern) {
         if (e == null) {
             throw new IllegalArgumentException("e must not be null");
         }
@@ -55,17 +73,22 @@ public abstract class Camera {
         if (t == null) {
             throw new IllegalArgumentException("t must not be null");
         }
+        if (samplingPattern == null) {
+            throw new IllegalArgumentException("samplingPattern must not be null");
+        }
         this.e = e;
         this.g = g;
         this.t = t;
+        this.samplingPattern = samplingPattern;
 
         this.w = g.normalized().mul(-1);
         this.u = t.x(this.w).normalized();
         this.v = this.w.x(this.u);
+
     }
 
     /**
-     * Erstellt einen Srahl (Ray) für einen Pixel
+     * Returns a list of rays for x,y koordinates and width/height
      * @param w Breite des Bildes
      * @param h Höhe des Bildes
      * @param x x-Koordinate des Pixels

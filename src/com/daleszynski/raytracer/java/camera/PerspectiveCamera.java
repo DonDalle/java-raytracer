@@ -16,35 +16,33 @@ import java.util.stream.Collectors;
 public class PerspectiveCamera extends Camera {
 
     /**
-     * Öffnungwinkel
+     * opening angle
      */
     public final double angle;
 
-    public final SamplingPattern samplingPattern;
 
     /**
-     * Erstellt eine Orhographische Kamera
-     *
-     * @param e     Position der Kamera
-     * @param g     Blickrichtung
-     * @param t     Up-Vektor
-     * @param angle Öffnungswinkel
+     * Creates the Camera with a regularsamplingpattern with just one samplingpoint
+     * @param e Position of Camera
+     * @param g viewing direction
+     * @param t up-vector
+     * @param angle opening angle
      */
     public PerspectiveCamera(Point3 e, Vector3 g, Vector3 t, double angle) {
-        super(e, g, t);
-        if (angle < 0) {
-            throw new IllegalArgumentException("angle may not be less than 0");
-        }
-        this.angle = angle;
-        this.samplingPattern = new RegularSamplingPattern(1,1);
+        this(e,g,t,angle, new RegularSamplingPattern(1,1));
     }
 
-    //TODO Javadoc
+    /**
+     * Creates the Camera with the given sampling pattern
+     * @param e Position of Camera
+     * @param g viewing direction
+     * @param t up-vectorß
+     * @param angle opening angle
+     * @param samplingPattern the samplingpattern
+     */
     public PerspectiveCamera(Point3 e, Vector3 g, Vector3 t, double angle, SamplingPattern samplingPattern) {
-        super(e,g,t);
+        super(e,g,t, samplingPattern);
         this.angle = angle;
-        this.samplingPattern = samplingPattern;
-
     }
 
     @Override
