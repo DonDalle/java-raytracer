@@ -8,7 +8,7 @@ import com.daleszynski.raytracer.java.raytracer.World;
 
 import java.util.List;
 
-//TODO JavaDoc
+
 
 /**
  * Abstrakte Basisklasse für das Licht
@@ -24,9 +24,20 @@ public abstract class Light {
      */
     public final boolean castsShadows;
 
-    //TODO JavaDoc
+
+    /**
+     * The Constant attenuation
+     */
     public final double constantAttenuation;
+
+    /**
+     * The linear attenuation
+     */
     public final double linearAttenuation;
+
+    /**
+     * the quadratic attenuation
+     */
     public final double quadraticAttenuation;
 
     /**
@@ -59,28 +70,53 @@ public abstract class Light {
      */
     public abstract List<Vector3> directionFrom(Point3 point);
 
-
+    /**
+     * Returns the intensity on a given Point
+     * @param point the Point
+     * @return the Intensity
+     */
     public abstract List<Double> intensity(final Point3 point);
+
+    /**
+     * Returns the number of sampling points used for this light
+     * @return the Number of sampling points
+     */
     public abstract int getSamplingPointsCount();
 
     @Override
     public String toString() {
         return "Light{" +
-                "diffuse=" + color +
+                "color=" + color +
+                ", castsShadows=" + castsShadows +
+                ", constantAttenuation=" + constantAttenuation +
+                ", linearAttenuation=" + linearAttenuation +
+                ", quadraticAttenuation=" + quadraticAttenuation +
                 '}';
     }
 
-    public Color getColor() {
-        return color;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Light light = (Light) o;
+
+        return castsShadows == light.castsShadows && Double.compare(light.constantAttenuation, constantAttenuation) == 0 && Double.compare(light.linearAttenuation, linearAttenuation) == 0 && Double.compare(light.quadraticAttenuation, quadraticAttenuation) == 0 && color.equals(light.color);
+
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+        int result;
+        long temp;
+        result = color.hashCode();
+        result = 31 * result + (castsShadows ? 1 : 0);
+        temp = Double.doubleToLongBits(constantAttenuation);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(linearAttenuation);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(quadraticAttenuation);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
     }
 }
